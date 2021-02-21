@@ -1,0 +1,37 @@
+{% extends "Book/base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<br/>
+<h2>Rooms available in the period: {{ date }} meeting the requirements:</h2>
+<br/>
+<table class="table table-bordered table-striped">
+    <thead class="lead">
+        <tr>
+            <th>Living Room:</th>
+            <th>Capacity:</th>
+            <th>Projector:</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for result in results %}
+        <tr>
+            <td><a href="{% url 'book:room' result.id %}">{{ result.name }}</a></td>
+            <td>{{ result.capacity }}</td>
+            <td>
+                {% if result.projector == True %}
+                Yes
+                {% else %}
+                No
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<br/>
+<p class="text-danger">*Clicking on the name of the room will take you to the booking page</p>
+
+
+{% endblock %}

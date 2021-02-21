@@ -1,0 +1,56 @@
+{% extends 'Book/base.html' %}
+
+{% block title %}Conference Room{% endblock %}
+
+{% block content %}
+    <br/>
+    <h2>All Conference Rooms</h2>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <thead class="thead lead">
+                <th>ROOM NAME</th>
+                <th>CAPACITY</th>
+                <th>STATUS</th>
+                <th>MODIFY</th>
+                <th>DELETE</th>
+            </thead>
+        </tr>
+        {% for room in rooms %}
+        <tr>
+            <td><a href="{% url 'book:room' room.id %}">{{ room.name }}</a></td>
+            <td>{{ room.capacity }}</td>
+            {% for k,v in status.items %}
+                {% if room.id == k %}
+                    <td{% if v == "Free" %} class="text-success"
+                    {% else %} class="text-danger" {% endif %}>{{ v }}</td>
+                {% endif %}
+            {% endfor %}
+            <td><a href="{% url 'book:modify' room.id %}"><button class="btn btn-warning">modify</button></a></td>
+            <td><a href="{% url 'book:delete' room.id %}"><button class="btn btn-danger">remove</button></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{% url 'book:new-room' %}">
+        <button class="btn btn-success">Create New Conference Room</button>
+    </a><br/><br/>
+    <div class="jumbotron">
+        <h3>SEARCH FOR AVAILABLE ROOM</h3>
+        <br/>
+        <form id="search" method="get" action="{% url 'book:search' %}">
+            <label>ROOM NAME
+                <input type="text" name="room">
+            </label><br/>
+            <label>MINIMUM CAPACITY
+                <input type="number" name="capacity">
+            </label><br/>
+            <label>BOOKING DATE
+                <input type="date" name="date" required="required">
+            </label><br/>
+            <label>PROJECTOR
+                <input type="checkbox" name="projector">
+            </label><br/>
+                <input type="submit" value="Search" class="btn btn-warning">
+        </form>
+    </div>
+
+{% endblock %}

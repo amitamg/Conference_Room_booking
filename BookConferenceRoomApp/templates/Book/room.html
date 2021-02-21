@@ -1,0 +1,56 @@
+{% extends 'Book/base.html' %}
+
+{% block title %}Room details{% endblock %}
+
+{% block content %}
+    <br/>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td>Conference room</td>
+            <td class="lead">{{ room.name|upper }}</td>
+        </tr>
+        <tr>
+            <td>Capacity</td>
+            <td>{{ room.capacity }}</td>
+        </tr>
+        <tr>
+            <td>Projector</td>
+            <td>{{ projector }}</td>
+        </tr>
+        <tr>
+            <td>The room is busy</td>
+            <td>{% for reservation in reservations %}{{ reservation }}<br/>{% endfor %}</td>
+        </tr>
+        <tr>
+            <td>Book a room</td>
+            <td>
+                <a href="{% url 'book:reservation' room.id %}">
+                <button class="btn btn-success">Book It</button></a>
+            </td>
+        </tr>
+    </table>
+    <br/>
+
+    {% if room.id > 1 %}
+        <a href="{% url 'book:room' room.id|add:'-1' %}">
+            <button class="btn btn-warning">Hot Hall</button>
+        </a>
+    {% else %}
+        <a href="{% url 'book:room' rooms|length %}">
+            <button class="btn btn-warning">Hot Hall</button>
+        </a>
+    {% endif %}
+
+    {% if room.id < rooms|length %}
+        <a href="{% url 'book:room' room.id|add:'1' %}">
+            <button class="btn btn-warning">Another Room</button>
+        </a>
+    {% else %}
+        <a href="{% url 'book:room' 1 %}">
+            <button class="btn btn-warning">Another Room</button>
+        </a>
+    {% endif %}
+
+    <br/>
+    <p class="text-danger lead">{{ message }}</p>
+{% endblock %}

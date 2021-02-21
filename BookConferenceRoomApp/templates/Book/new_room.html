@@ -1,0 +1,26 @@
+{% extends 'Book/base.html' %}
+
+{% block title %}Add a room{% endblock %}
+
+{% block content %}
+
+    <br/>
+    <h2>Create a new conference room</h2>
+    <p class="text-danger">{{ message }}</p>
+    <form method="POST" action="#">
+    {% csrf_token %}
+        <label>ROOM NAME
+            <input type="text" name="name" class="form-control" required="required">
+        </label><br/>
+        <label>ROOM CAPACITY
+            <input type="number" name="capacity" placeholder="e.g. 50"
+                   class="form-control" required="required">
+        </label><br/>
+        <label>IS THERE A PROJECTOR:
+            <input type="radio" name="projector" value="True">Yes
+            <input type="radio" name="projector" value="False">No
+        </label><br/>
+        <input class="btn btn-success" type="submit" value="CREATE">
+    </form>
+
+{% endblock %}

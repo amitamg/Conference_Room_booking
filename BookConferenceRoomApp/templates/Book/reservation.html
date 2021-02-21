@@ -1,0 +1,37 @@
+{% extends 'Book/base.html' %}
+
+{% block title %}Reservation{% endblock %}
+
+{% block content %}
+    <br/>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td>Living Room:</td>
+            <td>{{ room.name }}</td>
+        </tr>
+        <tr>
+            <td>Occupied Dates:</td>
+            <td>
+                {% for book in reservations %}
+                {{ book }}<br/>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+
+    <h2>Book an appointment - room {{ room.name }}</h2>
+    <p class="text-danger">{{ message }}</p>
+
+    <form method="post" action="#">
+    {% csrf_token %}
+        <label>Data:
+            <input type="date" name="date" required="required">
+        </label><br/>
+        <label>Additional remarks:<br/>
+            <textarea name="comment" class="form-control">Lack of Availability</textarea>
+        </label><br/>
+        <input type="submit" name="submit" value="Book It" class="btn btn-success">
+    </form>
+    <br>
+    <a href="{% url 'book:room' room.id %}"><button class="btn btn-warning">Back to the view of the Room</button></a>
+{% endblock %}
