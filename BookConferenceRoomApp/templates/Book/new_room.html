@@ -1,18 +1,18 @@
 {% extends 'Book/base.html' %}
 
-{% block title %}Add a room{% endblock %}
+{% block title %}Add a Hall{% endblock %}
 
 {% block content %}
 
     <br/>
-    <h2>Create a new conference room</h2>
+    <h2>Create a new conference Hall</h2>
     <p class="text-danger">{{ message }}</p>
     <form method="POST" action="#">
     {% csrf_token %}
-        <label>ROOM NAME
+        <label>Hall NAME
             <input type="text" name="name" class="form-control" required="required">
         </label><br/>
-        <label>ROOM CAPACITY
+        <label>Hall CAPACITY
             <input type="number" name="capacity" placeholder="e.g. 50"
                    class="form-control" required="required">
         </label><br/>

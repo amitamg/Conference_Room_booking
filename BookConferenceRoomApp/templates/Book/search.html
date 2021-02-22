@@ -4,12 +4,12 @@
 
 {% block content %}
 <br/>
-<h2>Rooms available in the period: {{ date }} meeting the requirements:</h2>
+<h2>Halls available in the period: {{ date }} meeting the requirements:</h2>
 <br/>
 <table class="table table-bordered table-striped">
     <thead class="lead">
         <tr>
-            <th>Living Room:</th>
+            <th>Conference Hall:</th>
             <th>Capacity:</th>
             <th>Projector:</th>
         </tr>
@@ -17,7 +17,7 @@
     <tbody>
     {% for result in results %}
         <tr>
-            <td><a href="{% url 'book:room' result.id %}">{{ result.name }}</a></td>
+            <td><a href="{% url 'book:Hall' result.id %}">{{ result.name }}</a></td>
             <td>{{ result.capacity }}</td>
             <td>
                 {% if result.projector == True %}
@@ -31,7 +31,7 @@
     </tbody>
 </table>
 <br/>
-<p class="text-danger">*Clicking on the name of the room will take you to the booking page</p>
+<p class="text-danger">*Clicking on the name of the Hall will take you to the booking page</p>
 
 
 {% endblock %}

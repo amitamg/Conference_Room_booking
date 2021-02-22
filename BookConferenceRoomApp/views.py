@@ -12,50 +12,50 @@ today = datetime.today().strftime('%Y-%m-%d')
 
 
 def index(request):
-    rooms = Room.objects.all()
+    Halls = Hall.objects.all()
     status = {}
 
-    for room in rooms:
-        if room.reservation_set.filter(date=today):
-            status[room.id] = 'Busy'
+    for Hall in Halls:
+        if Hall.reservation_set.filter(date=today):
+            status[Hall.id] = 'Busy'
         else:
-            status[room.id] = 'Free'
+            status[Hall.id] = 'Free'
     ctx = {
-        'rooms': rooms,
+        'Halls': Halls,
         'status': status,
     }
     return render(request, 'Book/index.html', ctx)
 
 
-def room(request, id):
-    room = Room.objects.get(pk=int(id))
-    if room:
-        reservations = room.reservation_set.filter(date__gte=today).order_by('date')
-        rooms = Room.objects.all()
-        if room.projector == True:
+def Hall(request, id):
+    Hall = Hall.objects.get(pk=int(id))
+    if Hall:
+        reservations = Hall.reservation_set.filter(date__gte=today).order_by('date')
+        Halls = Hall.objects.all()
+        if Hall.projector == True:
             projector = "Yes"
         else:
             projector = "No"
         ctx = {
-            "room": room,
+            "Hall": Hall,
             "projector": projector,
             "reservations": reservations,
-            "rooms": rooms,
+            "Halls": Halls,
         }
     else:
         ctx = {
-            "room": 'Room Not Available',
+            "Hall": 'Hall Not Available',
             "projector": 'NA',
             "reservations": 'NA',
-            "rooms": 'NA',
+            "Halls": 'NA',
         }
-    return render(request, 'Book/room.html', ctx)
+    return render(request, 'Book/Hall.html', ctx)
 
 
-class NewRoomView(View):
+class NewHallView(View):
 
     def get(self, request):
-        return render(request, 'Book/new_room.html')
+        return render(request, 'Book/new_Hall.html')
 
     def post(self, request):
         try:
@@ -64,7 +64,7 @@ class NewRoomView(View):
             projector = request.POST.get("projector")
             proj = True if projector == "True" else False
 
-            Room.objects.create(name=name, capacity=capacity, projector=proj)
+            Hall.objects.create(name=name, capacity=capacity, projector=proj)
             return redirect("/")
 
         except Exception as e:
@@ -72,15 +72,15 @@ class NewRoomView(View):
             ctx = {
                 "message": message,
             }
-            return render(request, 'Book/new_room.html', ctx)
+            return render(request, 'Book/new_Hall.html', ctx)
 
 
 class ModifyView(View):
 
     def get(self, request, id):
-        room = Room.objects.get(pk=id)
+        Hall = Hall.objects.get(pk=id)
         ctx = {
-            "room": room,
+            "Hall": Hall,
         }
         return render(request, 'Book/modify.html', ctx)
 
@@ -88,18 +88,18 @@ class ModifyView(View):
         name = request.POST.get("name")
         capacity = request.POST.get("capacity")
         projector = True if request.POST.get('projector') else False
-        room = Room.objects.get(pk=id)
+        Hall = Hall.objects.get(pk=id)
         try:
-            room.name = name
-            room.capacity = capacity
-            room.projector = projector
-            room.save()
+            Hall.name = name
+            Hall.capacity = capacity
+            Hall.projector = projector
+            Hall.save()
             return redirect("/")
         except Exception as e:
             message = "Incorrect Data: {}".format(e)
             ctx = {
                 "message": message,
-                "room": room,
+                "Hall": Hall,
             }
             return render(request, 'Book/modify.html', ctx)
 
@@ -107,9 +107,9 @@ class ModifyView(View):
 class DeleteView(View):
 
     def get(self, request, id):
-        room = Room.objects.get(pk=id)
+        Hall = Hall.objects.get(pk=id)
         ctx = {
-            "room": room,
+            "Hall": Hall,
         }
         return render(request, 'Book/delete.html', ctx)
 
@@ -117,85 +117,85 @@ class DeleteView(View):
         action = request.POST.get("submit")
 
         if action == "Yes":
-            room = Room.objects.get(pk=id)
-            room.delete()
+            Hall = Hall.objects.get(pk=id)
+            Hall.delete()
         return redirect("/")
 
 
 class ReservationView(View):
 
     def get(self, request, id):
-        room = Room.objects.get(pk=id)
-        reservations = room.reservation_set.filter(date__gte=today).order_by('date')
+        Hall = Hall.objects.get(pk=id)
+        reservations = Hall.reservation_set.filter(date__gte=today).order_by('date')
         ctx = {
-            "room": room,
+            "Hall": Hall,
             "reservations": reservations,
         }
         return render(request, 'Book/reservation.html', ctx)
 
     def post(self, request, id):
-        room = Room.objects.get(pk=id)
-        reservations = room.reservation_set.filter(date__gte=today).order_by('date')
+        Hall = Hall.objects.get(pk=id)
+        reservations = Hall.reservation_set.filter(date__gte=today).order_by('date')
         try:
             date = request.POST.get("date")
             comment = request.POST.get("comment")
             message = ""
 
-            if room.reservation_set.filter(date=date):
-                message = "This Room is already occupied for that day"
+            if Hall.reservation_set.filter(date=date):
+                message = "This Hall is already occupied for that day"
             elif date < today:
                 message = "The chosen data can not be in the past"
 
-            if (message == "This Room is already occupied for that day"
+            if (message == "This Hall is already occupied for that day"
                 or message == "The chosen data can not be in the past"):
                 ctx = {
-                    "room": room,
+                    "Hall": Hall,
                     "reservations": reservations,
                     "message": message,
                 }
                 return render(request, 'Book/reservation.html', ctx)
 
             reservation = Reservation.objects.create(date=date, comment=comment)
-            reservation.room.add(room)
+            reservation.Hall.add(Hall)
 
         except Exception as e:
             message = "Incorrect Data: {}".format(e)
             ctx = {
                 "message": message,
-                "room": room,
+                "Hall": Hall,
                 "reservations": reservations,
             }
             return render(request, 'Book/reservation.html', ctx)
 
-        if room.projector == True:
+        if Hall.projector == True:
             projector = "TAK"
         else:
             projector = "NIE"
         message = """Dziękujemy! Zarezerwowałeś salę: 
-                     {} w dniu: {}""".format(room.name, date)
+                     {} w dniu: {}""".format(Hall.name, date)
         ctx = {
-            "room": room,
+            "Hall": Hall,
             "projector": projector,
             "reservations": reservations,
             "message": message,
         }
-        return render(request, 'Book/room.html', ctx)
+        return render(request, 'Book/Hall.html', ctx)
 
 
 class SearchView(View):
 
     def get(self, request):
-        room = request.GET.get("room")
+        Hall = request.GET.get("Hall")
         capacity = request.GET.get("capacity")
         date = request.GET.get("date")
         projector = True if request.GET.get('projector') else False
 
-        result1 = Room.objects.exclude(reservation__date=date)
+        result1 = Hall.objects.exclude(reservation__date=date)
 
-        if room == "":
+        if Hall == "":
             result2 = result1
         else:
-            result2 = result1.filter(name__icontains=room)
+            result2 = result1.filter(name__icontains=Hall)
 
         if capacity != "":
             result3 = result2.filter(capacity__gte=int(capacity))
